@@ -1,0 +1,73 @@
+name: pyreal_hub
+description: A hybrid NOSTR client/relay/private blockchain hub app with holographic data partitioning
+version: 0.1.0
+publish_to: 'none'
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # State Management
+  flutter_riverpod: ^2.4.9
+
+  # NOSTR
+  nostr_core_dart: ^0.1.0
+
+  # Blockchain & Crypto
+  web3dart: ^2.7.1
+  crypto: ^3.0.3
+  pointycastle: ^3.7.3
+  convert: ^3.1.1
+
+  # Data Partitioning & Storage
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
+  sqflite: ^2.3.0
+  path_provider: ^2.1.1
+
+  # Network
+  http: ^1.1.0
+  web_socket_channel: ^2.4.0
+  dio: ^5.4.0
+
+  # UI
+  flutter_svg: ^2.0.9
+  cached_network_image: ^3.3.0
+  webview_flutter: ^4.4.2
+
+  # Utils
+  uuid: ^4.2.2
+  intl: ^0.18.1
+  logger: ^2.0.2
+  share_plus: ^7.2.1
+
+  # FFI for OpenCL
+  ffi: ^2.1.0
+
+  # JSON
+  json_annotation: ^4.8.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.1
+  build_runner: ^2.4.7
+  json_serializable: ^6.7.1
+  hive_generator: ^2.0.1
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/images/
+    - assets/templates/
+
+  fonts:
+    - family: Roboto
+      fonts:
+        - asset: assets/fonts/Roboto-Regular.ttf
+        - asset: assets/fonts/Roboto-Bold.ttf
+          weight: 700
