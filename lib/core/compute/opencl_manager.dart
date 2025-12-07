@@ -185,6 +185,7 @@ class ComputeDevice {
   final int maxWorkGroupSize;
   final int globalMemorySize;
   final bool isAvailable;
+  final Map<String, dynamic> metadata;
 
   ComputeDevice({
     required this.id,
@@ -194,6 +195,7 @@ class ComputeDevice {
     required this.maxWorkGroupSize,
     required this.globalMemorySize,
     required this.isAvailable,
+    this.metadata = const {},
   });
 
   Map<String, dynamic> toJson() => {
@@ -204,6 +206,7 @@ class ComputeDevice {
     'maxWorkGroupSize': maxWorkGroupSize,
     'globalMemorySize': globalMemorySize,
     'isAvailable': isAvailable,
+    'metadata': metadata,
   };
 
   @override
