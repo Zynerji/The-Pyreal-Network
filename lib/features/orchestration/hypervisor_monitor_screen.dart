@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:async';
 import '../../core/orchestration/hypervisor.dart';
+import '../../core/orchestration/conductor_llm.dart';
 import '../../core/compute/device_type.dart';
 import '../../shared/widgets/polished_widgets.dart';
 import '../hub/providers/integrated_providers.dart';
@@ -36,6 +37,7 @@ class _HypervisorMonitorScreenState extends ConsumerState<HypervisorMonitorScree
   @override
   Widget build(BuildContext context) {
     final hypervisor = ref.watch(hypervisorProvider);
+    final conductor = ref.watch(conductorProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -61,6 +63,8 @@ class _HypervisorMonitorScreenState extends ConsumerState<HypervisorMonitorScree
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _buildSystemOverview(hypervisor),
+              const SizedBox(height: 16),
+              _buildConductorMetrics(conductor),
               const SizedBox(height: 16),
               _buildResourceAllocation(hypervisor),
               const SizedBox(height: 16),
@@ -183,6 +187,227 @@ class _HypervisorMonitorScreenState extends ConsumerState<HypervisorMonitorScree
               ),
             ],
           ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildConductorMetrics(ConductorLLM conductor) {
+    final metrics = conductor.getMetrics();
+    final totalDecisions = metrics['totalDecisions'] as int? ?? 0;
+    final batchedDecisions = metrics['batchedDecisions'] as int? ?? 0;
+    final avgConfidence = (metrics['averageConfidence'] as num? ?? 0.0).toDouble();
+    final learnedPatterns = metrics['learnedPatterns'] as int? ?? 0;
+    final recentDecisions = metrics['recentDecisions'] as List? ?? [];
+
+    return AnimatedCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.psychology, color: Colors.purple, size: 28),
+              const SizedBox(width: 12),
+              const Text(
+                'AI Orchestrator (Conductor)',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: Colors.purple.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.purple.withOpacity(0.3)),
+                ),
+                child: const Row(
+                  children: [
+                    Icon(Icons.visibility_off, size: 12, color: Colors.purple),
+                    SizedBox(width: 4),
+                    Text(
+                      'Invisible',
+                      style: TextStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.purple,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          Row(
+            children: [
+              Expanded(
+                child: _buildMetricCard(
+                  'Decisions',
+                  totalDecisions.toString(),
+                  Icons.auto_fix_high,
+                  Colors.purple,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: _buildMetricCard(
+                  'Confidence',
+                  '${(avgConfidence * 100).toStringAsFixed(1)}%',
+                  Icons.trending_up,
+                  Colors.teal,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Expanded(
+                child: _buildMetricCard(
+                  'Learned',
+                  '$learnedPatterns patterns',
+                  Icons.school,
+                  Colors.amber,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: _buildMetricCard(
+                  'ZK Batch',
+                  '$batchedDecisions/100',
+                  Icons.layers,
+                  Colors.indigo,
+                ),
+              ),
+            ],
+          ),
+          if (recentDecisions.isNotEmpty) ...[
+            const SizedBox(height: 20),
+            const Text(
+              'Recent Decisions',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 12),
+            ...recentDecisions.take(5).map((decision) {
+              final taskId = decision['taskId'] as String? ?? 'unknown';
+              final taskType = decision['taskType'] as String? ?? 'unknown';
+              final device = decision['device'] as String? ?? 'unknown';
+              final confidence = (decision['confidence'] as num? ?? 0.0).toDouble();
+              final timestamp = decision['timestamp'] as String? ?? '';
+
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: InkWell(
+                  onTap: () => _showDecisionDetailsDialog(context, conductor, taskId),
+                  borderRadius: BorderRadius.circular(8),
+                  child: Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.purple.withOpacity(0.05),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Colors.purple.withOpacity(0.2)),
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                    decoration: BoxDecoration(
+                                      color: Colors.purple.withOpacity(0.2),
+                                      borderRadius: BorderRadius.circular(4),
+                                    ),
+                                    child: Text(
+                                      taskType.toUpperCase(),
+                                      style: const TextStyle(
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.purple,
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Icon(
+                                    _getDeviceIcon(device),
+                                    size: 14,
+                                    color: _getDeviceColor(device),
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    device.toUpperCase(),
+                                    style: TextStyle(
+                                      fontSize: 11,
+                                      color: Colors.grey[400],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                taskId,
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  color: Colors.grey[500],
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
+                          ),
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Row(
+                              children: [
+                                Icon(
+                                  confidence > 0.8 ? Icons.check_circle : Icons.info,
+                                  size: 14,
+                                  color: confidence > 0.8 ? Colors.green : Colors.orange,
+                                ),
+                                const SizedBox(width: 4),
+                                Text(
+                                  '${(confidence * 100).toStringAsFixed(0)}%',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold,
+                                    color: confidence > 0.8 ? Colors.green : Colors.orange,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              _formatTimestamp(timestamp),
+                              style: TextStyle(
+                                fontSize: 10,
+                                color: Colors.grey[600],
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(width: 8),
+                        Icon(
+                          Icons.chevron_right,
+                          size: 16,
+                          color: Colors.grey[600],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            }),
+          ],
         ],
       ),
     );
@@ -583,6 +808,195 @@ class _HypervisorMonitorScreenState extends ConsumerState<HypervisorMonitorScree
     } else {
       return '${duration.inSeconds}s';
     }
+  }
+
+  String _formatTimestamp(String timestamp) {
+    try {
+      final dt = DateTime.parse(timestamp);
+      final now = DateTime.now();
+      final diff = now.difference(dt);
+
+      if (diff.inMinutes < 1) {
+        return 'Just now';
+      } else if (diff.inHours < 1) {
+        return '${diff.inMinutes}m ago';
+      } else if (diff.inDays < 1) {
+        return '${diff.inHours}h ago';
+      } else {
+        return '${diff.inDays}d ago';
+      }
+    } catch (e) {
+      return 'Unknown';
+    }
+  }
+
+  void _showDecisionDetailsDialog(BuildContext context, ConductorLLM conductor, String taskId) {
+    final decision = conductor.getDecisionReasoning(taskId);
+
+    if (decision == null) {
+      showErrorSnackbar(context, 'Decision details not found');
+      return;
+    }
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Row(
+          children: [
+            const Icon(Icons.psychology, color: Colors.purple),
+            const SizedBox(width: 8),
+            const Expanded(
+              child: Text('Conductor Decision Reasoning'),
+            ),
+            IconButton(
+              icon: const Icon(Icons.close),
+              onPressed: () => Navigator.pop(context),
+            ),
+          ],
+        ),
+        content: SingleChildScrollView(
+          child: Container(
+            width: MediaQuery.of(context).size.width * 0.8,
+            constraints: const BoxConstraints(maxWidth: 600),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _buildDetailRow('Task ID', decision['taskId'] as String? ?? 'Unknown'),
+                const SizedBox(height: 12),
+                _buildDetailRow('Task Type', (decision['taskType'] as String? ?? 'unknown').toUpperCase()),
+                const SizedBox(height: 12),
+                _buildDetailRow('User ID', decision['userId'] as String? ?? 'Unknown'),
+                const Divider(height: 24),
+                _buildDetailRow('Recommended Device', (decision['device'] as String? ?? 'unknown').toUpperCase()),
+                const SizedBox(height: 12),
+                _buildDetailRow('Estimated Resources', '${decision['resources']} CUs'),
+                const SizedBox(height: 12),
+                _buildDetailRow('Priority', 'Level ${decision['priority']}'),
+                const SizedBox(height: 12),
+                _buildDetailRow('Duration', '${decision['duration']}s'),
+                const SizedBox(height: 12),
+                Row(
+                  children: [
+                    const Text(
+                      'Confidence: ',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14,
+                      ),
+                    ),
+                    Text(
+                      '${((decision['confidence'] as num? ?? 0.0) * 100).toStringAsFixed(1)}%',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        color: (decision['confidence'] as num? ?? 0.0) > 0.8
+                            ? Colors.green
+                            : Colors.orange,
+                      ),
+                    ),
+                  ],
+                ),
+                const Divider(height: 24),
+                const Text(
+                  'Reasoning',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.purple.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: Colors.purple.withOpacity(0.3)),
+                  ),
+                  child: Text(
+                    decision['reasoning'] as String? ?? 'No reasoning provided',
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: Colors.grey[300],
+                      height: 1.5,
+                    ),
+                  ),
+                ),
+                if ((decision['suggestedNodes'] as List?)?.isNotEmpty ?? false) ...[
+                  const SizedBox(height: 16),
+                  const Text(
+                    'Suggested Nodes',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  ...(decision['suggestedNodes'] as List).map((node) => Padding(
+                    padding: const EdgeInsets.only(bottom: 4),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.circle, size: 6, color: Colors.purple),
+                        const SizedBox(width: 8),
+                        Text(
+                          node.toString(),
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey[400],
+                          ),
+                        ),
+                      ],
+                    ),
+                  )),
+                ],
+                const SizedBox(height: 16),
+                Text(
+                  'Timestamp: ${_formatTimestamp(decision['timestamp'] as String? ?? '')}',
+                  style: TextStyle(
+                    fontSize: 11,
+                    color: Colors.grey[600],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        actions: [
+          PremiumButton(
+            text: 'Close',
+            icon: Icons.check,
+            onPressed: () => Navigator.pop(context),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDetailRow(String label, String value) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(
+          width: 140,
+          child: Text(
+            '$label:',
+            style: const TextStyle(
+              fontWeight: FontWeight.w600,
+              fontSize: 14,
+            ),
+          ),
+        ),
+        Expanded(
+          child: Text(
+            value,
+            style: TextStyle(
+              fontSize: 14,
+              color: Colors.grey[300],
+            ),
+          ),
+        ),
+      ],
+    );
   }
 
   void _showAddTaskDialog(BuildContext context, Hypervisor hypervisor) {
