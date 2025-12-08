@@ -5,11 +5,11 @@ import '../../features/synergy/synergy_dashboard.dart';
 import '../../features/ai/ai_marketplace_screen.dart';
 import '../../features/safety/content_safety_screen.dart';
 import '../../features/orchestration/hypervisor_monitor_screen.dart';
-import '../../features/conductor/conductor_chat_screen.dart';
 import 'app_navigation.dart';
 
 /// Main navigation shell for the application
 /// Provides bottom navigation bar and drawer access
+/// Conductor runs invisibly within the hypervisor
 class NavigationShell extends ConsumerStatefulWidget {
   const NavigationShell({super.key});
 
@@ -26,7 +26,6 @@ class _NavigationShellState extends ConsumerState<NavigationShell> {
     AIMarketplaceScreen(),
     ContentSafetyScreen(),
     HypervisorMonitorScreen(),
-    ConductorChatScreen(),
   ];
 
   final List<String> _titles = const [
@@ -34,8 +33,7 @@ class _NavigationShellState extends ConsumerState<NavigationShell> {
     'Synergy Dashboard',
     'AI Marketplace',
     'Content Safety',
-    'Hypervisor Monitor',
-    'Conductor AI',
+    'Hypervisor + AI Orchestrator',
   ];
 
   @override
@@ -91,11 +89,10 @@ class _NavigationShellState extends ConsumerState<NavigationShell> {
       case 3:
         return Icons.shield;
       case 4:
-        return Icons.settings_system_daydream;
-      case 5:
-        return Icons.psychology;
+        return Icons.psychology; // Hypervisor + Conductor AI
       default:
         return Icons.dashboard;
     }
   }
 }
+

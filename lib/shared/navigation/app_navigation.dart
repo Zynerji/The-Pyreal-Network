@@ -4,17 +4,16 @@ import '../../features/synergy/synergy_dashboard.dart';
 import '../../features/ai/ai_marketplace_screen.dart';
 import '../../features/safety/content_safety_screen.dart';
 import '../../features/orchestration/hypervisor_monitor_screen.dart';
-import '../../features/conductor/conductor_chat_screen.dart';
 
 /// Central navigation for Pyreal Hub
 /// Provides access to all major features with AAA-quality polish
+/// Note: Conductor runs invisibly as part of hypervisor
 class AppNavigation {
   static const String hub = '/';
   static const String synergy = '/synergy';
   static const String aiMarketplace = '/ai-marketplace';
   static const String contentSafety = '/content-safety';
   static const String hypervisor = '/hypervisor';
-  static const String conductor = '/conductor';
 
   static Map<String, WidgetBuilder> get routes => {
         hub: (context) => const HubScreen(),
@@ -22,7 +21,6 @@ class AppNavigation {
         aiMarketplace: (context) => const AIMarketplaceScreen(),
         contentSafety: (context) => const ContentSafetyScreen(),
         hypervisor: (context) => const HypervisorMonitorScreen(),
-        conductor: (context) => const ConductorChatScreen(),
       };
 
   static void navigateTo(BuildContext context, String route) {
@@ -96,17 +94,9 @@ class PyrealDrawer extends StatelessWidget {
                       context,
                       icon: Icons.settings_system_daydream,
                       title: 'Hypervisor',
-                      subtitle: 'Resource orchestration',
+                      subtitle: 'Resource + AI orchestration',
                       route: AppNavigation.hypervisor,
                       gradient: const [Color(0xFFFF6B35), Color(0xFFFF8C42)],
-                    ),
-                    _buildNavItem(
-                      context,
-                      icon: Icons.psychology,
-                      title: 'Conductor',
-                      subtitle: 'AI orchestrator chat',
-                      route: AppNavigation.conductor,
-                      gradient: const [Color(0xFF8B5CF6), Color(0xFF6366F1)],
                     ),
                     const Divider(height: 32),
                     _buildInfoSection(),
@@ -374,12 +364,8 @@ class PyrealBottomNav extends StatelessWidget {
             label: 'Safety',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.settings_system_daydream),
-            label: 'System',
-          ),
-          BottomNavigationBarItem(
             icon: Icon(Icons.psychology),
-            label: 'Conductor',
+            label: 'Hypervisor',
           ),
         ],
       ),
