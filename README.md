@@ -135,7 +135,7 @@ The fundamental value unit of the network. PYREAL is earned by contributing reso
 - 🏪 Marketplace listings: **1 ₱/listing**
 
 **Supply Dynamics**:
-- **Initial Supply**: 1,000,000 ₱ (genesis block)
+- **Initial Supply**: 1,000,000,000,000 ₱ (1 trillion, genesis block)
 - **Emission Rate**: Decreasing by 10% annually
 - **Burn Mechanisms**: 5% of all transactions burned
 - **Result**: Deflationary over time, increasing scarcity
@@ -482,6 +482,168 @@ Network Value Growth: 6,320x in 2 years
 3. Deflationary pressure (12% annual burn)
 4. Network effects (value = n²)
 5. Conductor optimization (20% efficiency gains)
+6. **Idle compute monetization (2x economic output)**
+
+---
+
+### **⚡ Idle Compute Monetization**
+
+**Problem**: In distributed compute networks, resources sit idle when there's no user demand, wasting potential earnings and contributor engagement.
+
+**Solution**: Conductor automatically assigns productive idle tasks that generate value and revenue 24/7.
+
+#### **10 Productive Idle Task Types**
+
+When network utilization drops below 70%, Conductor intelligently assigns the most profitable idle work:
+
+| Idle Task Type | Revenue (₱/hour) | Synergy | Best For |
+|---|---|---|---|
+| **External Inference API** | 5-20 | ⭐⭐⭐⭐⭐ | Serve AI requests from external customers, drives PYREAL demand |
+| **Render Farm** | 4-15 | ⭐⭐⭐ | 3D rendering for studios, architects, game developers |
+| **Blockchain Services** | 3-12 | ⭐⭐⭐ | Archive nodes, indexing, validation for multiple chains |
+| **AI Model Training** | 2-8 | ⭐⭐⭐⭐⭐ | Collaborative training → models sold on marketplace |
+| **Video Transcoding** | 2-8 | ⭐⭐⭐ | Process videos for streaming platforms |
+| **NOSTR Relay** | 0.5-2 | ⭐⭐⭐⭐⭐ | High-performance relays, perfect synergy with existing NOSTR integration |
+| **HDP Storage** | 0.3-1.5 | ⭐⭐⭐⭐⭐ | Store data shards, strengthens redundancy |
+| **Content Generation** | 1-6 | ⭐⭐⭐⭐ | AI-generate stock images, music, code for marketplace |
+| **Speculative Cache** | 0.5-3 | ⭐⭐⭐⭐ | Pre-compute common queries for instant delivery |
+| **Scientific Compute** | 0.1-0.5 + 2x rep | ⭐⭐⭐⭐ | Protein folding, climate modeling (prestige + grants) |
+
+#### **Intelligent Assignment Algorithm**
+
+Conductor scores each idle task based on:
+
+```dart
+// Weighted scoring: 40% revenue, 30% network synergy, 30% device fit
+totalScore = (revenueScore * 0.4) + (synergyScore * 0.3) + (deviceFitScore * 0.3)
+```
+
+**Factors Considered**:
+- **Revenue potential**: Expected ₱/hour earnings
+- **Network synergy**: How well it builds ecosystem value (NOSTR relay = 100%, render farm = 60%)
+- **Device suitability**: GPU tasks → GPUs, storage → high memory, etc.
+- **User preferences**: Opt-out options, minimum revenue thresholds
+- **Reputation multipliers**: Scientific compute gives 2x reputation boost
+
+#### **Revenue Distribution Models**
+
+Each idle task type has its own distribution:
+
+**Example: External Inference API (Highest Revenue)**
+- 70% → Compute provider
+- 20% → Network treasury
+- 10% → Burned (deflationary)
+
+**Example: AI Model Training (Deferred Revenue)**
+- Train collaboratively during idle time
+- When model sells on marketplace:
+  - 60% → Training contributors (split by compute time)
+  - 30% → Network treasury
+  - 10% → Conductor development fund
+
+**Example: Scientific Compute (Mission-Driven)**
+- 70% → Compute provider
+- 20% → Network treasury
+- 10% → Research fund
+- **Bonus**: 2x reputation multiplier (faster tier advancement)
+
+#### **Idle Economics Impact**
+
+Assuming **70% average idle time** monetized at **average 3 ₱/hour**:
+
+```
+WITHOUT IDLE MONETIZATION:
+Month 1:   1,000 users  →    1,000 ₱/day (active compute only)
+Month 12:  8,916 users  →   79,501 ₱/day
+Month 24: 79,497 users  → 6,320,732 ₱/day
+
+WITH IDLE MONETIZATION:
+Month 1:   1,000 users  →    3,100 ₱/day (+210% boost)
+  - Active:  1,000 ₱/day
+  - Idle:    2,100 ₱/day (70% of 24h × 3 ₱/h × 1000 users)
+
+Month 12:  8,916 users  →  246,253 ₱/day (+210% boost)
+  - Active:   79,501 ₱/day
+  - Idle:    166,752 ₱/day
+
+Month 24: 79,497 users  → 19,594,270 ₱/day (+210% boost)
+  - Active:  6,320,732 ₱/day
+  - Idle:   13,273,538 ₱/day
+
+Result: Idle compute DOUBLES network economic output!
+```
+
+#### **Synergy Multipliers (Updated)**
+
+**New Multipliers with Idle Compute**:
+- **Idle Utilization × Treasury** = Sustainable economics (no waste)
+- **External API × PYREAL Demand** = Price floor from USD/crypto conversion
+- **Scientific Compute × Reputation** = Mission-driven user acquisition
+- **Speculative Cache × Performance** = Competitive speed advantage
+- **AI Training × Marketplace** = Self-sustaining AI economy
+- **NOSTR Relay × Network Effects** = Infrastructure network growth
+- **HDP Storage × Redundancy** = Stronger data availability guarantees
+
+#### **User Value Propositions**
+
+**For Contributors**:
+- ✅ Earn 24/7 (not just when tasks are assigned)
+- ✅ Average 2x revenue (active + idle)
+- ✅ Choose preferred idle tasks (opt-out options)
+- ✅ Reputation boosts from mission-driven work
+- ✅ No additional setup (Conductor handles everything)
+
+**For the Network**:
+- ✅ Keeps contributors engaged continuously
+- ✅ Builds infrastructure (NOSTR relays, HDP storage)
+- ✅ External revenue (USD → PYREAL conversion drives price)
+- ✅ Marketplace inventory (trained models, generated content)
+- ✅ Competitive advantage (speculative cache = faster responses)
+- ✅ Prestige (scientific computing partnerships)
+
+**For External Customers**:
+- ✅ Cheaper inference than OpenAI/Anthropic (distributed costs)
+- ✅ Decentralized (no single point of failure)
+- ✅ Privacy-preserving (no data stored centrally)
+- ✅ High availability (global node distribution)
+
+#### **Example Idle Task Flow**
+
+```
+1. USER CONTRIBUTES COMPUTE
+   ↓
+2. CONDUCTOR DETECTS 65% IDLE TIME
+   ↓
+3. ANALYZES BEST IDLE TASK:
+   - GPU device → AI model training scores highest
+   - 8 ₱/hour potential revenue
+   - 95% network synergy (marketplace)
+   - 100% device fit
+   ↓
+4. ASSIGNS TRAINING TASK:
+   - Task: Fine-tune code review model
+   - Collaborators: 50 idle nodes
+   - Duration: 8 hours overnight
+   ↓
+5. MODEL COMPLETES, SELLS FOR 500 ₱:
+   - 300 ₱ → 50 trainers (6 ₱ each)
+   - 150 ₱ → Network treasury
+   - 50 ₱ → Development fund
+   ↓
+6. TRAINER EARNS:
+   - Active compute: 40 ₱ (5 ₱/hr × 8 hours)
+   - Idle training: 6 ₱ (deferred)
+   - Total: 46 ₱ (15% bonus from idle)
+```
+
+#### **Scaling Benefits**
+
+**At Scale (Month 24: 79,497 users)**:
+- **13.3 million ₱/day from idle** alone
+- Equivalent to **$66,367/day external revenue** (at $0.005/₱)
+- **$24.2M annual external revenue** flowing into ecosystem
+- Creates **price floor** for PYREAL token
+- **Network flywheel**: More users → more idle capacity → more external revenue → higher PYREAL value → attracts more users
 
 ---
 
