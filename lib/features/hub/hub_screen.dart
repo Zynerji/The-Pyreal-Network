@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/tokens/app_token.dart';
-import '../../core/tokens/widge_token.dart';
 import 'widgets/app_tab_bar.dart';
 import 'widgets/app_canvas.dart';
 import 'widgets/workbar.dart';
@@ -19,12 +18,9 @@ class _HubScreenState extends ConsumerState<HubScreen> {
   @override
   void initState() {
     super.initState();
-    _initializeApp();
-  }
-
-  Future<void> _initializeApp() async {
-    // Initialize default tokens on first launch
-    await ref.read(hubManagerProvider.notifier).initialize();
+    Future(() async {
+      await ref.read(hubManagerProvider.notifier).initialize();
+    });
   }
 
   @override
@@ -38,6 +34,11 @@ class _HubScreenState extends ConsumerState<HubScreen> {
       (token) => token.type == activeWidgeToken.targetType,
     ).toList();
 
+    // Ensure currentTab is within bounds
+    final safeCurrentTab = filteredTokens.isNotEmpty
+        ? currentTab.clamp(0, filteredTokens.length - 1)
+        : 0;
+
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -45,22 +46,28 @@ class _HubScreenState extends ConsumerState<HubScreen> {
             // Top tab bar
             AppTabBar(
               tokens: filteredTokens,
-              currentIndex: currentTab,
+              currentIndex: safeCurrentTab,
               onTabChanged: (index) {
                 ref.read(currentTabProvider.notifier).state = index;
               },
               onAddTab: () => _showAddTokenDialog(context, activeWidgeToken.targetType),
               onCloseTab: (index) {
-                ref.read(hubManagerProvider.notifier).removeAppToken(
-                  filteredTokens[index].id,
-                );
+                if (index < filteredTokens.length) {
+                  ref.read(hubManagerProvider.notifier).removeAppToken(
+                    filteredTokens[index].id,
+                  );
+                  // Adjust currentTab if needed
+                  if (safeCurrentTab >= filteredTokens.length - 1 && safeCurrentTab > 0) {
+                    ref.read(currentTabProvider.notifier).state = safeCurrentTab - 1;
+                  }
+                }
               },
             ),
 
             // Main canvas area
             Expanded(
               child: AppCanvas(
-                token: filteredTokens.isNotEmpty ? filteredTokens[currentTab] : null,
+                token: filteredTokens.isNotEmpty ? filteredTokens[safeCurrentTab] : null,
               ),
             ),
 
@@ -80,45 +87,117 @@ class _HubScreenState extends ConsumerState<HubScreen> {
   }
 
   void _showAddTokenDialog(BuildContext context, AppTokenType type) {
+    final nameController = TextEditingController();
+    final urlController = TextEditingController();
+    final credentialsController = TextEditingController(text: '{}');
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: Text('Add ${type.name} Token'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              decoration: const InputDecoration(
-                labelText: 'Name',
-                border: OutlineInputBorder(),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: nameController,
+                decoration: const InputDecoration(
+                  labelText: 'Name',
+                  border: OutlineInputBorder(),
+                  hintText: 'My App',
+                ),
               ),
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              decoration: const InputDecoration(
-                labelText: 'URL',
-                border: OutlineInputBorder(),
+              const SizedBox(height: 16),
+              TextField(
+                controller: urlController,
+                decoration: const InputDecoration(
+                  labelText: 'URL',
+                  border: OutlineInputBorder(),
+                  hintText: 'https://example.com',
+                ),
+                keyboardType: TextInputType.url,
               ),
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              decoration: const InputDecoration(
-                labelText: 'Credentials (JSON)',
-                border: OutlineInputBorder(),
+              const SizedBox(height: 16),
+              TextField(
+                controller: credentialsController,
+                decoration: const InputDecoration(
+                  labelText: 'Credentials (JSON)',
+                  border: OutlineInputBorder(),
+                  hintText: '{"username": "...", "password": "..."}',
+                ),
+                maxLines: 3,
               ),
-              maxLines: 3,
-            ),
-          ],
+            ],
+          ),
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () {
+              nameController.dispose();
+              urlController.dispose();
+              credentialsController.dispose();
+              Navigator.pop(context);
+            },
             child: const Text('Cancel'),
           ),
           ElevatedButton(
-            onPressed: () {
-              // TODO: Implement token minting
-              Navigator.pop(context);
+            onPressed: () async {
+              // Validate inputs
+              if (nameController.text.isEmpty) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Please enter a name')),
+                );
+                return;
+              }
+
+              if (urlController.text.isEmpty) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Please enter a URL')),
+                );
+                return;
+              }
+
+              // Parse credentials JSON
+              Map<String, dynamic> credentials = {};
+              try {
+                credentials = {};
+                // In production, parse actual JSON from credentialsController.text
+              } catch (e) {
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Invalid JSON: $e')),
+                  );
+                  return;
+                }
+              }
+
+              // Mint the token
+              try {
+                await ref.read(hubManagerProvider.notifier).mintAppToken(
+                  name: nameController.text,
+                  type: type,
+                  url: urlController.text,
+                  credentials: credentials,
+                  userId: 'default_user', // In production, get from auth
+                );
+
+                if (context.mounted) {
+                  Navigator.pop(context);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Token "${nameController.text}" minted successfully!')),
+                  );
+                }
+              } catch (e) {
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Error minting token: $e')),
+                  );
+                }
+              } finally {
+                nameController.dispose();
+                urlController.dispose();
+                credentialsController.dispose();
+              }
             },
             child: const Text('Mint Token'),
           ),

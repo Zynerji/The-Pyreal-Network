@@ -55,8 +55,7 @@ class AppToken {
     this.isDefault = false,
   });
 
-  factory AppToken.fromJson(Map<String, dynamic> json) =>
-      _$AppTokenFromJson(json);
+  factory AppToken.fromJson(Map<String, dynamic> json) => _$AppTokenFromJson(json);
 
   Map<String, dynamic> toJson() => _$AppTokenToJson(this);
 

@@ -1,3 +1,4 @@
+import '../compute/device_type.dart';
 import 'dart:typed_data';
 import '../hdp/hdp_manager.dart';
 import '../compute/opencl_manager.dart';
@@ -14,12 +15,9 @@ class GPUAcceleratedHDP extends HDPManager {
   GPUAcceleratedHDP({
     required this.openclManager,
     required this.deviceDetector,
-    int totalShards = 10,
-    int? thresholdShards,
-  }) : super(
-    totalShards: totalShards,
-    thresholdShards: thresholdShards,
-  );
+    super.totalShards,
+    super.thresholdShards,
+  });
 
   /// Encode data using GPU acceleration
   @override

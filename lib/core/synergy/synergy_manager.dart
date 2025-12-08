@@ -1,7 +1,9 @@
+import '../compute/device_type.dart';
 import '../blockchain/blockchain.dart';
 import '../nostr/nostr_client.dart';
 import '../hdp/hdp_manager.dart';
 import '../compute/opencl_manager.dart';
+import '../tokens/app_token.dart';
 import 'nostr_blockchain_bridge.dart';
 import 'compute_rewards.dart';
 import 'blockchain_identity.dart';
@@ -80,7 +82,7 @@ class SynergyManager {
     final blocks = blockchain.getBlocksByType('compute_contribution');
     return blocks.fold<double>(
       0.0,
-      (sum, block) => sum + (block.data['totalReward'] as num?)?.toDouble() ?? 0.0,
+      (sum, block) => sum + ((block.data['totalReward'] as num?)?.toDouble() ?? 0.0),
     );
   }
 
@@ -154,27 +156,30 @@ class SynergyManager {
 
   Future<bool> _checkIdentitySystem() async {
     try {
-      final count = await _countIdentities();
+      await _countIdentities();
       return true;
     } catch (e) {
+      _logger.e('Identity system check failed: $e');
       return false;
     }
   }
 
   Future<bool> _checkRewardsSystem() async {
     try {
-      final total = await _getTotalRewardsDistributed();
+      await _getTotalRewardsDistributed();
       return true;
     } catch (e) {
+      _logger.e('Rewards system check failed: $e');
       return false;
     }
   }
 
   Future<bool> _checkMarketplace() async {
     try {
-      final count = await _countMarketplaceListings();
+      await _countMarketplaceListings();
       return true;
     } catch (e) {
+      _logger.e('Marketplace check failed: $e');
       return false;
     }
   }

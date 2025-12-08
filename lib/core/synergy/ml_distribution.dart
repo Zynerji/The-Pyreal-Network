@@ -1,3 +1,4 @@
+import '../compute/device_type.dart';
 import '../compute/opencl_manager.dart';
 import '../compute/device_detector.dart';
 import '../blockchain/blockchain.dart';

@@ -1,6 +1,7 @@
-import 'dart:ffi';
 import 'dart:io';
+
 import 'package:logger/logger.dart';
+import 'device_type.dart';
 
 /// OpenCL Compute Sharing Manager
 /// Enables distributed GPU/CPU compute across the network
@@ -213,11 +214,7 @@ class ComputeDevice {
   String toString() => 'ComputeDevice($name: $type, $computeUnits CUs)';
 }
 
-enum DeviceType {
-  cpu,
-  gpu,
-  accelerator,
-}
+
 
 /// Represents a compute task
 class ComputeTask {
