@@ -135,7 +135,7 @@ The fundamental value unit of the network. PYREAL is earned by contributing reso
 - 🏪 Marketplace listings: **1 ₱/listing**
 
 **Supply Dynamics**:
-- **Initial Supply**: 1,000,000 ₱ (genesis block)
+- **Initial Supply**: 1,000,000,000,000 ₱ (1 trillion, genesis block)
 - **Emission Rate**: Decreasing by 10% annually
 - **Burn Mechanisms**: 5% of all transactions burned
 - **Result**: Deflationary over time, increasing scarcity
