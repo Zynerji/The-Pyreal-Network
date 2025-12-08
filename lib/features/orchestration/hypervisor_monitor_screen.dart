@@ -200,6 +200,11 @@ class _HypervisorMonitorScreenState extends ConsumerState<HypervisorMonitorScree
     final learnedPatterns = metrics['learnedPatterns'] as int? ?? 0;
     final recentDecisions = metrics['recentDecisions'] as List? ?? [];
 
+    // Idle compute metrics
+    final idleCompute = metrics['idleCompute'] as Map<String, dynamic>? ?? {};
+    final totalIdleTasks = idleCompute['totalIdleTasks'] as int? ?? 0;
+    final totalIdleRevenue = (idleCompute['totalIdleRevenue'] as num? ?? 0.0).toDouble();
+
     return AnimatedCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -284,6 +289,68 @@ class _HypervisorMonitorScreenState extends ConsumerState<HypervisorMonitorScree
               ),
             ],
           ),
+          if (totalIdleTasks > 0) ...[
+            const SizedBox(height: 20),
+            const Divider(),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                const Icon(Icons.power, color: Colors.green, size: 24),
+                const SizedBox(width: 8),
+                const Text(
+                  'Idle Compute Monetization',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const Spacer(),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Colors.green.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.monetization_on, size: 14, color: Colors.green),
+                      const SizedBox(width: 4),
+                      Text(
+                        '${totalIdleRevenue.toStringAsFixed(1)} ₱ earned',
+                        style: const TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.green,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Expanded(
+                  child: _buildMetricCard(
+                    'Idle Tasks',
+                    totalIdleTasks.toString(),
+                    Icons.archive,
+                    Colors.green,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: _buildMetricCard(
+                    'Revenue',
+                    '${totalIdleRevenue.toStringAsFixed(1)} ₱',
+                    Icons.attach_money,
+                    Colors.lime,
+                  ),
+                ),
+              ],
+            ),
+          ],
           if (recentDecisions.isNotEmpty) ...[
             const SizedBox(height: 20),
             const Text(

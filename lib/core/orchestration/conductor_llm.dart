@@ -5,6 +5,7 @@ import '../compute/opencl_manager.dart';
 import '../compute/device_type.dart';
 import '../nostr/nostr_client.dart';
 import 'hypervisor.dart';
+import 'idle_compute.dart';
 
 /// Conductor: Invisible distributed AI orchestrator
 /// Runs as part of the hypervisor layer to intelligently manage resources
@@ -35,6 +36,13 @@ class ConductorLLM {
   // Usage pattern learning
   Map<String, UsagePattern> _learnedPatterns = {};
   int _totalTasksProcessed = 0;
+
+  // Idle compute management
+  List<IdleTaskAssignment> _idleTaskHistory = [];
+  Map<IdleTaskType, int> _idleTaskDistribution = {};
+  Map<IdleTaskType, double> _idleRevenueByType = {};
+  double _totalIdleRevenue = 0.0;
+  int _totalIdleTasksAssigned = 0;
 
   ConductorLLM({
     required this.blockchain,
@@ -189,6 +197,13 @@ class ConductorLLM {
         'confidence': d.confidence,
         'timestamp': d.timestamp.toIso8601String(),
       }).toList(),
+      // Idle compute metrics
+      'idleCompute': {
+        'totalIdleTasks': _totalIdleTasksAssigned,
+        'totalIdleRevenue': _totalIdleRevenue,
+        'taskDistribution': _idleTaskDistribution.map((k, v) => MapEntry(k.name, v)),
+        'revenueByType': _idleRevenueByType.map((k, v) => MapEntry(k.name, v)),
+      },
     };
   }
 
@@ -509,6 +524,233 @@ class ConductorLLM {
       estimatedDuration: estimatedDuration,
       suggestedNodes: suggestedNodes,
     );
+  }
+
+  // =========================================================================
+  // IDLE COMPUTE MANAGEMENT - Monetize Unused Resources
+  // =========================================================================
+
+  /// Assign idle compute work when network utilization is low
+  /// Returns the best idle task to perform based on device, preferences, and revenue potential
+  Future<IdleTaskAssignment?> assignIdleWork({
+    required DeviceCapabilities device,
+    required UserIdlePreferences preferences,
+    required double currentUtilization,
+  }) async {
+    // Only assign idle work when utilization is below 70%
+    if (currentUtilization >= 0.7) {
+      return null;
+    }
+
+    _logger.d('🔋 Assigning idle work (${(currentUtilization * 100).toStringAsFixed(1)}% utilization)');
+
+    // Score each possible idle task
+    final scores = <IdleTaskType, double>{};
+    final Map<IdleTaskType, String> reasoning = {};
+
+    for (final taskType in IdleTaskType.values) {
+      // Check if task is allowed by user preferences
+      if (!preferences.isAllowed(taskType)) {
+        continue;
+      }
+
+      // Check if device is suitable for this task
+      if (!device.isSuitableFor(taskType)) {
+        continue;
+      }
+
+      // Get revenue model for this task
+      final revenue = IdleTaskRevenue.revenueModels[taskType]!;
+
+      // Check if meets minimum revenue requirement
+      if (revenue.averageRevenue < preferences.minRevenuePyrealPerHour) {
+        continue;
+      }
+
+      // Calculate composite score
+      final revenueScore = revenue.averageRevenue / 20.0; // Normalize to 0-1
+      final synergyScore = _calculateSynergyScore(taskType);
+      final deviceFitScore = _calculateDeviceFitScore(device, taskType);
+
+      // Weighted scoring: 40% revenue, 30% synergy, 30% device fit
+      final totalScore = (revenueScore * 0.4) + (synergyScore * 0.3) + (deviceFitScore * 0.3);
+
+      scores[taskType] = totalScore;
+      reasoning[taskType] = _generateIdleTaskReasoning(
+        taskType,
+        revenue,
+        synergyScore,
+        deviceFitScore,
+      );
+    }
+
+    // No suitable tasks found
+    if (scores.isEmpty) {
+      return null;
+    }
+
+    // Select highest scoring task
+    final bestTask = scores.entries.reduce((a, b) => a.value > b.value ? a : b).key;
+    final bestScore = scores[bestTask]!;
+    final revenue = IdleTaskRevenue.revenueModels[bestTask]!;
+
+    final assignment = IdleTaskAssignment(
+      taskType: bestTask,
+      score: bestScore,
+      estimatedRevenuePyrealPerHour: revenue.averageRevenue,
+      networkSynergyScore: _calculateSynergyScore(bestTask),
+      reasoning: reasoning[bestTask]!,
+      assignedDevice: device.type,
+      timestamp: DateTime.now(),
+    );
+
+    // Track assignment
+    _totalIdleTasksAssigned++;
+    _idleTaskHistory.add(assignment);
+    _idleTaskDistribution[bestTask] = (_idleTaskDistribution[bestTask] ?? 0) + 1;
+
+    _logger.i('✅ Idle task assigned: ${bestTask.name} (${revenue.averageRevenue.toStringAsFixed(1)} ₱/hr)');
+
+    return assignment;
+  }
+
+  /// Record revenue earned from an idle task
+  void recordIdleRevenue({
+    required IdleTaskType taskType,
+    required double pyrealEarned,
+    required Duration duration,
+  }) {
+    _totalIdleRevenue += pyrealEarned;
+    _idleRevenueByType[taskType] = (_idleRevenueByType[taskType] ?? 0.0) + pyrealEarned;
+
+    _logger.d('💰 Idle revenue: +${pyrealEarned.toStringAsFixed(2)} ₱ from ${taskType.name}');
+
+    // Add to blockchain (batched with ZK rollup)
+    blockchain.addBlock({
+      'type': 'idle_revenue',
+      'taskType': taskType.name,
+      'amount': pyrealEarned,
+      'duration': duration.inSeconds,
+      'timestamp': DateTime.now().toIso8601String(),
+    });
+  }
+
+  /// Get idle compute statistics
+  IdleComputeStats getIdleStats(double currentUtilization) {
+    final avgIdleUtilization = _idleTaskHistory.isEmpty
+        ? 0.0
+        : _idleTaskHistory.map((a) => a.networkSynergyScore).reduce((a, b) => a + b) / _idleTaskHistory.length;
+
+    return IdleComputeStats(
+      totalIdleTasksAssigned: _totalIdleTasksAssigned,
+      totalPyrealEarnedFromIdle: _totalIdleRevenue,
+      averageIdleUtilization: avgIdleUtilization,
+      taskDistribution: Map.from(_idleTaskDistribution),
+      revenueByTaskType: Map.from(_idleRevenueByType),
+      currentIdlePercentage: 1.0 - currentUtilization,
+    );
+  }
+
+  /// Calculate network synergy score for an idle task type
+  double _calculateSynergyScore(IdleTaskType taskType) {
+    switch (taskType) {
+      case IdleTaskType.nostrRelay:
+        return 1.0; // Perfect synergy with existing NOSTR integration
+      case IdleTaskType.hdpStorage:
+        return 1.0; // Perfect synergy with existing HDP system
+      case IdleTaskType.aiModelTraining:
+        return 0.95; // High synergy with AI marketplace
+      case IdleTaskType.externalInferenceAPI:
+        return 0.90; // High revenue + ecosystem growth
+      case IdleTaskType.contentGeneration:
+        return 0.85; // Builds marketplace inventory
+      case IdleTaskType.speculativeCache:
+        return 0.80; // Performance advantage
+      case IdleTaskType.blockchainServices:
+        return 0.70; // Moderate synergy
+      case IdleTaskType.scientificCompute:
+        return 0.75; // Prestige + reputation boost
+      case IdleTaskType.videoTranscode:
+        return 0.60; // External revenue but less synergy
+      case IdleTaskType.renderFarm:
+        return 0.60; // External revenue but less synergy
+    }
+  }
+
+  /// Calculate device fitness score for a task
+  double _calculateDeviceFitScore(DeviceCapabilities device, IdleTaskType taskType) {
+    switch (taskType) {
+      case IdleTaskType.aiModelTraining:
+        return device.hasGPU && device.computeUnits >= 30.0 ? 1.0 : 0.5;
+      case IdleTaskType.externalInferenceAPI:
+        return (device.hasGPU || device.hasNPU) && device.computeUnits >= 15.0 ? 1.0 : 0.6;
+      case IdleTaskType.renderFarm:
+        return device.hasGPU && device.computeUnits >= 20.0 ? 1.0 : 0.4;
+      case IdleTaskType.videoTranscode:
+        return device.computeUnits >= 15.0 ? 0.9 : 0.6;
+      case IdleTaskType.contentGeneration:
+        return (device.hasGPU || device.hasNPU) ? 0.95 : 0.5;
+      case IdleTaskType.blockchainServices:
+        return device.networkBandwidthMbps >= 10.0 ? 0.9 : 0.6;
+      case IdleTaskType.nostrRelay:
+        return device.networkBandwidthMbps >= 5.0 ? 0.95 : 0.7;
+      case IdleTaskType.hdpStorage:
+        return device.memoryGB >= 4.0 && device.networkBandwidthMbps >= 5.0 ? 1.0 : 0.7;
+      case IdleTaskType.scientificCompute:
+        return device.computeUnits >= 8.0 ? 0.9 : 0.6;
+      case IdleTaskType.speculativeCache:
+        return device.memoryGB >= 4.0 ? 0.9 : 0.6;
+    }
+  }
+
+  /// Generate reasoning for idle task assignment
+  String _generateIdleTaskReasoning(
+    IdleTaskType taskType,
+    IdleTaskRevenue revenue,
+    double synergyScore,
+    double deviceFitScore,
+  ) {
+    final buffer = StringBuffer();
+
+    buffer.write('${taskType.name}: ');
+    buffer.write('${revenue.averageRevenue.toStringAsFixed(1)} ₱/hr avg revenue, ');
+    buffer.write('${(synergyScore * 100).toStringAsFixed(0)}% network synergy, ');
+    buffer.write('${(deviceFitScore * 100).toStringAsFixed(0)}% device fit. ');
+
+    switch (taskType) {
+      case IdleTaskType.nostrRelay:
+        buffer.write('Builds NOSTR network infrastructure.');
+        break;
+      case IdleTaskType.hdpStorage:
+        buffer.write('Strengthens distributed storage redundancy.');
+        break;
+      case IdleTaskType.aiModelTraining:
+        buffer.write('Trains models for AI marketplace.');
+        break;
+      case IdleTaskType.externalInferenceAPI:
+        buffer.write('Serves external customers, drives PYREAL demand.');
+        break;
+      case IdleTaskType.blockchainServices:
+        buffer.write('Provides blockchain infrastructure services.');
+        break;
+      case IdleTaskType.scientificCompute:
+        buffer.write('Contributes to research (${revenue.reputationMultiplier}x reputation).');
+        break;
+      case IdleTaskType.contentGeneration:
+        buffer.write('Generates marketplace assets for sale.');
+        break;
+      case IdleTaskType.videoTranscode:
+        buffer.write('External video processing service.');
+        break;
+      case IdleTaskType.renderFarm:
+        buffer.write('3D rendering for external clients.');
+        break;
+      case IdleTaskType.speculativeCache:
+        buffer.write('Pre-computes queries for instant delivery.');
+        break;
+    }
+
+    return buffer.toString();
   }
 
   /// Dispose resources and flush ZK rollup batch
