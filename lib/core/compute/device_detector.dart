@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:logger/logger.dart';
 import 'opencl_manager.dart';
+import 'device_type.dart';
 
 /// Extended device detector for all compute-capable hardware
 /// Synergy: Unlock NPU, DSP, ISP, Video encoders for distributed compute
@@ -237,16 +238,7 @@ class ExtendedDeviceDetector {
   }
 }
 
-/// Extended device types including mobile processors
-enum DeviceType {
-  cpu,
-  gpu,
-  accelerator,
-  npu,              // Neural Processing Unit
-  dsp,              // Digital Signal Processor
-  isp,              // Image Signal Processor
-  videoProcessor,   // Video encode/decode hardware
-}
+// DeviceType now imported from device_type.dart
 
 /// Task types for optimal device selection
 enum ComputeTaskType {

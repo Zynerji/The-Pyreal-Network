@@ -68,17 +68,18 @@ class _WorkbarButton extends StatelessWidget {
         onTap: onTap,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
           children: [
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: isActive ? token.color.withOpacity(0.2) : Colors.transparent,
+                // color: isActive ? token.color.withOpacity(0.2) : Colors.transparent, // Disabled: WidgeToken has no color
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Icon(
-                token.icon,
+                Icons.extension, // Default icon used
                 size: 28,
-                color: isActive ? token.color : Colors.grey[500],
+                color: Colors.grey[500], // Default color, WidgeToken has no color
               ),
             ),
             const SizedBox(height: 4),
@@ -86,7 +87,7 @@ class _WorkbarButton extends StatelessWidget {
               token.name,
               style: TextStyle(
                 fontSize: 12,
-                color: isActive ? token.color : Colors.grey[500],
+                color: Colors.grey[500], // Default color, WidgeToken has no color
                 fontWeight: isActive ? FontWeight.w600 : FontWeight.normal,
               ),
             ),

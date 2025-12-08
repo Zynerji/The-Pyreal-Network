@@ -14,7 +14,7 @@ dependencies:
   flutter_riverpod: ^2.4.9
 
   # NOSTR
-  nostr_core_dart: ^0.1.0
+  ndk: ^0.6.0
 
   # Blockchain & Crypto
   web3dart: ^2.7.1
@@ -30,7 +30,7 @@ dependencies:
 
   # Network
   http: ^1.1.0
-  web_socket_channel: ^2.4.0
+  web_socket_channel: ^3.0.3
   dio: ^5.4.0
 
   # UI
@@ -48,26 +48,27 @@ dependencies:
   ffi: ^2.1.0
 
   # JSON
-  json_annotation: ^4.8.1
+  json_annotation: ^4.9.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^3.0.1
-  build_runner: ^2.4.7
+  build_runner: ^2.4.9
   json_serializable: ^6.7.1
   hive_generator: ^2.0.1
 
 flutter:
+
   uses-material-design: true
 
   assets:
     - assets/images/
     - assets/templates/
 
-  fonts:
-    - family: Roboto
-      fonts:
-        - asset: assets/fonts/Roboto-Regular.ttf
-        - asset: assets/fonts/Roboto-Bold.ttf
-          weight: 700
+  # fonts:
+  #   - family: Roboto
+  #     fonts:
+  #       - asset: assets/fonts/Roboto-Regular.ttf
+  #       - asset: assets/fonts/Roboto-Bold.ttf
+  #         weight: 700

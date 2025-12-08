@@ -1,3 +1,4 @@
+import '../../core/compute/opencl_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/synergy/synergy_manager.dart';

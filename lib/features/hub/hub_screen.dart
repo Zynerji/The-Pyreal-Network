@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/tokens/app_token.dart';
-import '../../core/tokens/widge_token.dart';
 import 'widgets/app_tab_bar.dart';
 import 'widgets/app_canvas.dart';
 import 'widgets/workbar.dart';
@@ -19,12 +18,9 @@ class _HubScreenState extends ConsumerState<HubScreen> {
   @override
   void initState() {
     super.initState();
-    _initializeApp();
-  }
-
-  Future<void> _initializeApp() async {
-    // Initialize default tokens on first launch
-    await ref.read(hubManagerProvider.notifier).initialize();
+    Future(() async {
+      await ref.read(hubManagerProvider.notifier).initialize();
+    });
   }
 
   @override
@@ -84,25 +80,25 @@ class _HubScreenState extends ConsumerState<HubScreen> {
       context: context,
       builder: (context) => AlertDialog(
         title: Text('Add ${type.name} Token'),
-        content: Column(
+        content: const Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             TextField(
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: 'Name',
                 border: OutlineInputBorder(),
               ),
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16),
             TextField(
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: 'URL',
                 border: OutlineInputBorder(),
               ),
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16),
             TextField(
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: 'Credentials (JSON)',
                 border: OutlineInputBorder(),
               ),

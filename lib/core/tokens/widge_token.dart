@@ -17,13 +17,13 @@ class WidgeToken {
   final String name;
 
   @HiveField(2)
-  final IconData icon;
+  // final IconData icon; // Disabled for code generation compatibility. Add custom JsonConverter if needed.
 
   @HiveField(3)
   final AppTokenType targetType;
 
   @HiveField(4)
-  final Color color;
+  // final Color color; // Disabled for code generation compatibility. Add custom JsonConverter if needed.
 
   @HiveField(5)
   final int position;
@@ -37,16 +37,15 @@ class WidgeToken {
   WidgeToken({
     required this.id,
     required this.name,
-    required this.icon,
+    // required this.icon, // Disabled for code generation compatibility
     required this.targetType,
-    required this.color,
+    // required this.color, // Disabled for code generation compatibility
     required this.position,
     this.isDefault = false,
     this.metadata = const {},
   });
 
-  factory WidgeToken.fromJson(Map<String, dynamic> json) =>
-      _$WidgeTokenFromJson(json);
+  factory WidgeToken.fromJson(Map<String, dynamic> json) => _$WidgeTokenFromJson(json);
 
   Map<String, dynamic> toJson() => _$WidgeTokenToJson(this);
 
@@ -63,9 +62,9 @@ class WidgeToken {
     return WidgeToken(
       id: id ?? this.id,
       name: name ?? this.name,
-      icon: icon ?? this.icon,
+      // icon: icon ?? this.icon, // Disabled for code generation compatibility
       targetType: targetType ?? this.targetType,
-      color: color ?? this.color,
+      // color: color ?? this.color, // Disabled for code generation compatibility
       position: position ?? this.position,
       isDefault: isDefault ?? this.isDefault,
       metadata: metadata ?? this.metadata,
@@ -78,36 +77,36 @@ class WidgeToken {
       WidgeToken(
         id: 'wt_social',
         name: 'Social',
-        icon: Icons.people,
+        // icon: Icons.people, // Disabled for code generation compatibility
         targetType: AppTokenType.nostrSocial,
-        color: const Color(0xFF8B5CF6),
+        // color: const Color(0xFF8B5CF6), // Disabled for code generation compatibility
         position: 0,
         isDefault: true,
       ),
       WidgeToken(
         id: 'wt_email',
         name: 'Email',
-        icon: Icons.email,
+        // icon: Icons.email, // Disabled for code generation compatibility
         targetType: AppTokenType.email,
-        color: const Color(0xFF3B82F6),
+        // color: const Color(0xFF3B82F6), // Disabled for code generation compatibility
         position: 1,
         isDefault: true,
       ),
       WidgeToken(
         id: 'wt_browser',
         name: 'Browser',
-        icon: Icons.language,
+        // icon: Icons.language, // Disabled for code generation compatibility
         targetType: AppTokenType.browser,
-        color: const Color(0xFF10B981),
+        // color: const Color(0xFF10B981), // Disabled for code generation compatibility
         position: 2,
         isDefault: true,
       ),
       WidgeToken(
         id: 'wt_apps',
         name: 'Apps',
-        icon: Icons.apps,
+        // icon: Icons.apps, // Disabled for code generation compatibility
         targetType: AppTokenType.custom,
-        color: const Color(0xFFF59E0B),
+        // color: const Color(0xFFF59E0B), // Disabled for code generation compatibility
         position: 3,
         isDefault: true,
       ),

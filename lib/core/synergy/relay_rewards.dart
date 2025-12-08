@@ -1,5 +1,4 @@
 import '../blockchain/blockchain.dart';
-import '../nostr/nostr_relay.dart';
 import 'package:logger/logger.dart';
 
 /// Rewards for hosting NOSTR relays
@@ -131,7 +130,7 @@ class RelayRewardsSystem {
 
     final totalRewards = blocks.fold<double>(
       0.0,
-      (sum, block) => sum + (block.data['totalReward'] as num?)?.toDouble() ?? 0.0,
+      (sum, block) => sum + ((block.data['totalReward'] as num?)?.toDouble() ?? 0.0),
     );
 
     return {

@@ -1,5 +1,5 @@
+import '../compute/device_type.dart';
 import '../blockchain/blockchain.dart';
-import '../compute/opencl_manager.dart';
 import '../tokens/app_token.dart';
 import 'package:uuid/uuid.dart';
 import 'package:logger/logger.dart';

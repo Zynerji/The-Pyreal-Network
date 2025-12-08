@@ -1,3 +1,4 @@
+import 'device_type.dart';
 import 'dart:async';
 import 'package:logger/logger.dart';
 import 'opencl_manager.dart';

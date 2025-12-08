@@ -21,6 +21,13 @@ class PyrealHubApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // To use a custom font in the future, set fontFamily to your font name and add assets in pubspec.yaml
+    // Example:
+    // theme: ThemeData(
+    //   fontFamily: 'Roboto',
+    //   ...existing code...
+    // )
+    // For now, use system font:
     return MaterialApp(
       title: 'Pyreal Hub',
       debugShowCheckedModeBanner: false,
@@ -31,6 +38,7 @@ class PyrealHubApp extends StatelessWidget {
           brightness: Brightness.dark,
         ),
         scaffoldBackgroundColor: const Color(0xFF0F0F0F),
+        fontFamily: null, // System font. Change to e.g. 'Roboto' to use a custom font.
       ),
       home: const HubScreen(),
     );
