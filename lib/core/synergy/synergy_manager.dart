@@ -3,6 +3,7 @@ import '../blockchain/blockchain.dart';
 import '../nostr/nostr_client.dart';
 import '../hdp/hdp_manager.dart';
 import '../compute/opencl_manager.dart';
+import '../tokens/app_token.dart';
 import 'nostr_blockchain_bridge.dart';
 import 'compute_rewards.dart';
 import 'blockchain_identity.dart';
@@ -123,15 +124,15 @@ class SynergyManager {
     _logger.i('✓ Earned ${reward.totalReward} tokens for compute');
 
     // Synergy 4: List app on marketplace
-      // final listing = await marketplace.listApp(
-      //   developerId: identity.id,
-      //   appName: 'Demo App',
-      //   description: 'A demo application',
-      //   // appType: AppTokenType.custom, // Disabled: AppTokenType is undefined
-      //   price: 10.0,
-      //   metadata: {'url': 'https://demo.app'},
-      // );
-      // _logger.i('✓ Listed app on marketplace: ${listing.appName}'); // Disabled: listing is undefined
+    final listing = await marketplace.listApp(
+      developerId: identity.id,
+      appName: 'Demo App',
+      description: 'A demo application',
+      appType: AppTokenType.custom,
+      price: 10.0,
+      metadata: {'url': 'https://demo.app'},
+    );
+    _logger.i('✓ Listed app on marketplace: ${listing.appName}');
 
     // Synergy 5: Get synergy statistics
     final stats = await getSynergyStats();
@@ -155,27 +156,30 @@ class SynergyManager {
 
   Future<bool> _checkIdentitySystem() async {
     try {
-      // final count = await _countIdentities(); // Disabled: unused variable
+      await _countIdentities();
       return true;
     } catch (e) {
+      _logger.e('Identity system check failed: $e');
       return false;
     }
   }
 
   Future<bool> _checkRewardsSystem() async {
     try {
-      // final total = await _getTotalRewardsDistributed(); // Disabled: unused variable
+      await _getTotalRewardsDistributed();
       return true;
     } catch (e) {
+      _logger.e('Rewards system check failed: $e');
       return false;
     }
   }
 
   Future<bool> _checkMarketplace() async {
     try {
-      // final count = await _countMarketplaceListings(); // Disabled: unused variable
+      await _countMarketplaceListings();
       return true;
     } catch (e) {
+      _logger.e('Marketplace check failed: $e');
       return false;
     }
   }

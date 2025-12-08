@@ -43,6 +43,7 @@ dependencies:
   intl: ^0.18.1
   logger: ^2.0.2
   share_plus: ^7.2.1
+  file_picker: ^6.1.1
 
   # FFI for OpenCL
   ffi: ^2.1.0
