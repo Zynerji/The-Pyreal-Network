@@ -4,6 +4,7 @@ import '../../features/synergy/synergy_dashboard.dart';
 import '../../features/ai/ai_marketplace_screen.dart';
 import '../../features/safety/content_safety_screen.dart';
 import '../../features/orchestration/hypervisor_monitor_screen.dart';
+import '../../features/conductor/conductor_chat_screen.dart';
 
 /// Central navigation for Pyreal Hub
 /// Provides access to all major features with AAA-quality polish
@@ -13,6 +14,7 @@ class AppNavigation {
   static const String aiMarketplace = '/ai-marketplace';
   static const String contentSafety = '/content-safety';
   static const String hypervisor = '/hypervisor';
+  static const String conductor = '/conductor';
 
   static Map<String, WidgetBuilder> get routes => {
         hub: (context) => const HubScreen(),
@@ -20,6 +22,7 @@ class AppNavigation {
         aiMarketplace: (context) => const AIMarketplaceScreen(),
         contentSafety: (context) => const ContentSafetyScreen(),
         hypervisor: (context) => const HypervisorMonitorScreen(),
+        conductor: (context) => const ConductorChatScreen(),
       };
 
   static void navigateTo(BuildContext context, String route) {
@@ -96,6 +99,14 @@ class PyrealDrawer extends StatelessWidget {
                       subtitle: 'Resource orchestration',
                       route: AppNavigation.hypervisor,
                       gradient: const [Color(0xFFFF6B35), Color(0xFFFF8C42)],
+                    ),
+                    _buildNavItem(
+                      context,
+                      icon: Icons.psychology,
+                      title: 'Conductor',
+                      subtitle: 'AI orchestrator chat',
+                      route: AppNavigation.conductor,
+                      gradient: const [Color(0xFF8B5CF6), Color(0xFF6366F1)],
                     ),
                     const Divider(height: 32),
                     _buildInfoSection(),
@@ -355,7 +366,7 @@ class PyrealBottomNav extends StatelessWidget {
             label: 'Synergy',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.psychology),
+            icon: Icon(Icons.smart_toy),
             label: 'AI',
           ),
           BottomNavigationBarItem(
@@ -365,6 +376,10 @@ class PyrealBottomNav extends StatelessWidget {
           BottomNavigationBarItem(
             icon: Icon(Icons.settings_system_daydream),
             label: 'System',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.psychology),
+            label: 'Conductor',
           ),
         ],
       ),

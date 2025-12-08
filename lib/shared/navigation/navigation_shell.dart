@@ -5,6 +5,7 @@ import '../../features/synergy/synergy_dashboard.dart';
 import '../../features/ai/ai_marketplace_screen.dart';
 import '../../features/safety/content_safety_screen.dart';
 import '../../features/orchestration/hypervisor_monitor_screen.dart';
+import '../../features/conductor/conductor_chat_screen.dart';
 import 'app_navigation.dart';
 
 /// Main navigation shell for the application
@@ -25,6 +26,7 @@ class _NavigationShellState extends ConsumerState<NavigationShell> {
     AIMarketplaceScreen(),
     ContentSafetyScreen(),
     HypervisorMonitorScreen(),
+    ConductorChatScreen(),
   ];
 
   final List<String> _titles = const [
@@ -33,6 +35,7 @@ class _NavigationShellState extends ConsumerState<NavigationShell> {
     'AI Marketplace',
     'Content Safety',
     'Hypervisor Monitor',
+    'Conductor AI',
   ];
 
   @override
@@ -84,11 +87,13 @@ class _NavigationShellState extends ConsumerState<NavigationShell> {
       case 1:
         return Icons.hub;
       case 2:
-        return Icons.psychology;
+        return Icons.smart_toy;
       case 3:
         return Icons.shield;
       case 4:
         return Icons.settings_system_daydream;
+      case 5:
+        return Icons.psychology;
       default:
         return Icons.dashboard;
     }

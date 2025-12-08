@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/ai/model_marketplace.dart';
 import '../../../core/api/compute_api.dart';
 import '../../../core/orchestration/hypervisor.dart';
+import '../../../core/orchestration/conductor_llm.dart';
 import '../../../core/safety/content_safety.dart';
 import '../../../core/synergy/synergy_manager.dart';
 import '../../../core/blockchain/blockchain.dart';
@@ -103,6 +104,32 @@ final hypervisorProvider = Provider<ComputeHypervisor>((ref) {
   ref.onDispose(() => hypervisor.stop());
 
   return hypervisor;
+});
+
+/// Conductor LLM - Intelligent distributed AI orchestrator
+final conductorProvider = Provider<ConductorLLM>((ref) {
+  final blockchain = ref.watch(blockchainProvider);
+  final hdpManager = ref.watch(hdpManagerProvider);
+  final openclManager = ref.watch(openclManagerProvider);
+  final nostrClient = ref.watch(nostrClientProvider);
+  final hypervisor = ref.watch(hypervisorProvider);
+
+  final conductor = ConductorLLM(
+    blockchain: blockchain,
+    hdpManager: hdpManager,
+    openclManager: openclManager,
+    nostrClient: nostrClient,
+    hypervisor: hypervisor,
+  );
+
+  // Initialize conductor automatically
+  Future.microtask(() async {
+    await conductor.initialize();
+  });
+
+  ref.onDispose(() => conductor.dispose());
+
+  return conductor;
 });
 
 /// Content Safety System - CSAM detection and reporting
