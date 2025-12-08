@@ -669,6 +669,472 @@ Result: Idle compute DOUBLES network economic output!
 
 ---
 
+## ⛓️ Blockchain Infrastructure
+
+### **Solana-Based Architecture**
+
+Pyreal Hub is built on **Solana** as the primary blockchain for maximum throughput and minimal transaction costs.
+
+#### **Why Solana?**
+
+| Feature | Solana | Ethereum | Bitcoin |
+|---------|--------|----------|---------|
+| **TPS** | 65,000+ | 15-30 | 7 |
+| **Block Time** | 400ms | 12s | 10min |
+| **Transaction Cost** | $0.00025 | $2-50 | $1-20 |
+| **Finality** | 13s | 6min | 60min |
+| **Smart Contracts** | Rust (fast) | Solidity | None |
+
+**Result**: Solana enables real-time compute sharing, instant token transfers, and micro-transactions that are economically viable.
+
+#### **Hybrid Architecture**
+
+```
+┌─────────────────────────────────────────────────┐
+│            PYREAL HUB BLOCKCHAIN                │
+│                                                 │
+│  ┌──────────────┐    ┌──────────────┐         │
+│  │   Solana     │◄───┤   Private    │         │
+│  │  Mainnet     │    │  Blockchain  │         │
+│  │              │    │   (Local)    │         │
+│  └──────┬───────┘    └──────┬───────┘         │
+│         │                   │                  │
+│    Public Layer        Private Layer          │
+│    (Settlements)       (High-Frequency)       │
+│         │                   │                  │
+│  ┌──────▼───────────────────▼───────┐         │
+│  │      ZK Rollup Aggregator        │         │
+│  │   (Batch 1000 txns → 1 proof)   │         │
+│  └────────────────────────────────── ┘         │
+│                                                 │
+│  ┌──────────────────────────────────┐         │
+│  │      Cross-Chain Bridges         │         │
+│  │   Ethereum │ BSC │ Polygon │ Arb  │         │
+│  └──────────────────────────────────┘         │
+└─────────────────────────────────────────────────┘
+```
+
+**Private Blockchain (Local)**:
+- Instant transactions (0ms finality)
+- Free operations (no gas fees)
+- High-frequency operations (token minting, idle tasks)
+- Periodically settled to Solana via ZK rollups
+
+**Solana Mainnet (Public)**:
+- Settlement layer for private blockchain
+- Cross-chain bridge anchors
+- External revenue settlements (USD → PYREAL)
+- Governance and staking contracts
+
+#### **ZK Rollup Batching**
+
+To minimize Solana transaction costs while maintaining full transparency:
+
+```
+PRIVATE BLOCKCHAIN (Free, Instant):
+1000 token mints
+1000 idle task assignments
+1000 tool executions
+         ↓
+    ZK AGGREGATOR
+         ↓
+1 Solana transaction with cryptographic proof
+Cost: $0.00025 (vs $0.25 for 1000 individual txns)
+Savings: 99.9%
+```
+
+**Benefits**:
+- Users get instant confirmations (private chain)
+- Network gets Solana security (periodic settlements)
+- Cost reduced by 1000x through batching
+
+---
+
+### **🌉 Cross-Chain Bridges**
+
+PYREAL tokens can bridge to major chains for maximum liquidity and DeFi integration.
+
+#### **Supported Chains**
+
+| Chain | Bridge Type | Transfer Time | Fee | Use Cases |
+|-------|-------------|---------------|-----|-----------|
+| **Ethereum** | Wormhole | 15 min | 0.1 ₱ | DeFi, Uniswap, lending |
+| **BSC** | Wormhole | 3 min | 0.05 ₱ | PancakeSwap, low-cost DeFi |
+| **Polygon** | Native | 7 min | 0.02 ₱ | Gaming, NFTs, micro-transactions |
+| **Arbitrum** | Native | 10 min | 0.03 ₱ | L2 DeFi, derivatives |
+| **Avalanche** | Wormhole | 5 min | 0.08 ₱ | Subnets, institutional DeFi |
+
+#### **Bridge Architecture**
+
+```
+PYREAL on Solana
+      ↓
+Lock in Solana vault (multi-sig)
+      ↓
+Generate ZK proof
+      ↓
+Submit proof to target chain
+      ↓
+Mint wrapped PYREAL (wPYREAL)
+      ↓
+User receives wPYREAL on Ethereum/BSC/etc
+```
+
+**Security**:
+- Multi-signature vaults (7-of-10 validator consensus)
+- ZK proofs prevent double-spending
+- Insurance fund (5% of bridged value)
+- Real-time monitoring by Conductor AI
+
+#### **DeFi Integration Examples**
+
+**Ethereum**:
+```solidity
+// Uniswap liquidity pool
+PYREAL-ETH pair
+Liquidity: $10M
+APY: 45% (trading fees + PYREAL staking rewards)
+```
+
+**BSC**:
+```
+PancakeSwap farm
+PYREAL-BUSD pair
+APY: 120% (subsidized by network treasury)
+```
+
+**Polygon**:
+```
+Aave lending market
+Deposit PYREAL, earn 8% APY
+Borrow against PYREAL at 60% LTV
+```
+
+---
+
+## 🛠️ Tool Repository & Marketplace
+
+### **Conductor Can Build, Save, Call, and Rent Tools**
+
+The Conductor LLM has the ability to **dynamically create executable tools** using code generation, then monetize them through a rental marketplace.
+
+#### **How It Works**
+
+```
+USER: "I need a tool that analyzes Ethereum gas prices and predicts optimal transaction times"
+         ↓
+CONDUCTOR ANALYZES:
+- Task requirements (API calls, data processing, ML inference)
+- Complexity level (medium)
+- Required compute (CPU, 2GB RAM)
+- Pricing (0.5 ₱/execution based on complexity)
+         ↓
+CONDUCTOR GENERATES CODE:
+// Auto-generated tool
+Future<GasAnalysis> analyzeGas(EthereumNetwork network) async {
+  final history = await fetchGasHistory(network, hours: 24);
+  final predictions = await runMLModel(history);
+  return GasAnalysis(
+    currentGas: predictions.current,
+    optimalTime: predictions.bestWindow,
+    savings: predictions.potentialSavings,
+  );
+}
+         ↓
+TOOL SAVED TO HDP:
+- Distributed across network nodes
+- Registered on blockchain
+- Listed in tool marketplace
+         ↓
+USER OPTIONS:
+1. Pay-per-execution: 0.5 ₱ each time
+2. Rent: 100 ₱/month (unlimited executions)
+3. Buy source: 500 ₱ (full ownership)
+```
+
+#### **Tool Categories**
+
+| Category | Examples | Avg Price | Revenue Split |
+|----------|----------|-----------|---------------|
+| **Data Processing** | ETL, transformation, validation | 0.1-0.5 ₱ | 70% creator, 20% treasury, 10% burn |
+| **AI Inference** | Classification, generation, analysis | 1.0-5.0 ₱ | 70% creator, 20% treasury, 10% burn |
+| **Blockchain** | Transaction builders, analyzers | 0.5-2.0 ₱ | 70% creator, 20% treasury, 10% burn |
+| **Financial** | Trading signals, risk analysis | 2.0-10.0 ₱ | 60% creator, 30% treasury, 10% burn |
+| **Security** | Vulnerability scanning, audit | 1.5-8.0 ₱ | 70% creator, 20% treasury, 10% burn |
+| **API Integration** | Third-party service wrappers | 0.2-1.0 ₱ | 70% creator, 20% treasury, 10% burn |
+
+#### **Rental Economics**
+
+**Pay-Per-Execution**:
+- User pays 0.5 ₱ per run
+- Immediate access
+- Best for occasional use
+
+**Monthly Rental**:
+- User pays 100 ₱/month
+- Unlimited executions
+- 10x cheaper for power users
+
+**Source Code Purchase**:
+- One-time payment of 500 ₱
+- Full ownership of code
+- Can modify and resell
+
+**Example Revenue (Popular Tool)**:
+```
+"Ethereum Gas Optimizer" tool
+- Created by user_abc123
+- Listed 6 months ago
+
+Revenue breakdown:
+Pay-per-execution: 10,000 runs × 0.5 ₱ = 5,000 ₱
+Monthly rentals: 50 users × 100 ₱ × 6 months = 30,000 ₱
+Source purchases: 10 × 500 ₱ = 5,000 ₱
+
+Total revenue: 40,000 ₱
+Creator earnings (70%): 28,000 ₱ ($140 at $0.005/₱)
+```
+
+#### **Tool Marketplace Features**
+
+- **Discoverability**: Search by keyword, category, popularity
+- **Quality Metrics**: Success rate, avg execution time, user ratings
+- **Version Control**: Tools can be updated, users get latest version
+- **Sandboxed Execution**: Tools run in isolated environments for security
+- **Resource Limits**: CPU, memory, network quotas prevent abuse
+- **Automatic Testing**: Conductor validates tool behavior before listing
+
+---
+
+## 💼 Financial Services Integration
+
+### **Banking Integration**
+
+Pyreal Hub integrates with traditional banking infrastructure to enable seamless fiat ↔ PYREAL conversion.
+
+#### **Supported Services**
+
+**Plaid Integration**:
+- Connect bank accounts (read-only by default)
+- View balances and transactions
+- Optional: Automatic PYREAL purchases from checking account
+
+**Wise/TransferWise**:
+- Instant PYREAL → USD conversion
+- Withdraw earnings to bank account
+- Multi-currency support (USD, EUR, GBP, etc.)
+
+**Crypto Off-Ramps**:
+- Moonpay: Buy PYREAL with credit card
+- Ramp: Instant bank → PYREAL
+- Wyre: PYREAL → bank account withdrawals
+
+#### **Banking AppToken Templates**
+
+```
+BANKING APP TOKENS:
+├─ Chase Bank (balance checking, bill pay via PYREAL)
+├─ Bank of America (account linking)
+├─ Wells Fargo (auto-save: deposit interest earned in PYREAL)
+├─ Coinbase (crypto trading integrated with PYREAL)
+└─ Robinhood (stock trading funded by PYREAL earnings)
+```
+
+**Example Flow**:
+```
+1. USER CONTRIBUTES COMPUTE
+   ↓
+   Earns 1000 ₱ over 1 week
+   ↓
+2. AUTO-CONVERT TO USD
+   ↓
+   1000 ₱ × $0.005 = $5 USD
+   ↓
+3. DEPOSIT TO BANK
+   ↓
+   Transferred to linked Chase account via Plaid
+   ↓
+4. RESULT: Passive income from idle compute
+```
+
+---
+
+### **📈 Stock Trading Integration**
+
+Pyreal Hub supports stock and options trading through integrated brokers, funded directly by PYREAL earnings.
+
+#### **Supported Brokers**
+
+| Broker | Features | Integration | Fees |
+|--------|----------|-------------|------|
+| **Robinhood** | Stocks, options, crypto | API + AppToken | Free trades |
+| **TD Ameritrade** | Advanced charts, research | thinkorswim API | $0 stocks, $0.65/contract |
+| **Interactive Brokers** | Global markets, advanced orders | TWS API | Low commissions |
+| **Webull** | Technical analysis, paper trading | REST API | Commission-free |
+| **E*TRADE** | Mutual funds, retirement | E*TRADE API | $0 stocks |
+
+#### **Trading Bot Integration**
+
+Users can run trading algorithms using their PYREAL compute resources:
+
+```dart
+// Example: Simple momentum trading bot
+class MomentumBot extends TradingBot {
+  @override
+  Future<void> onMarketData(MarketData data) async {
+    final momentum = calculateMomentum(data, period: 14);
+
+    if (momentum > 0.7 && !hasPosition) {
+      // Buy signal
+      await broker.buy(
+        symbol: 'AAPL',
+        quantity: calculatePositionSize(),
+        fundedBy: PyrealBalance(), // Use PYREAL earnings
+      );
+    } else if (momentum < 0.3 && hasPosition) {
+      // Sell signal
+      await broker.sell(symbol: 'AAPL', quantity: position.quantity);
+    }
+  }
+}
+```
+
+**Revenue Model**:
+- User earns PYREAL from compute
+- Auto-converts to USD
+- Funds trading account
+- Trading profits compound with compute earnings
+
+---
+
+## 🤖 High-Frequency Trading Bot (Network Owned)
+
+### **Pyreal Network HFT Bot**
+
+The network operates a **high-frequency trading bot** using a portion of the treasury to generate additional revenue for all PYREAL holders.
+
+#### **Architecture**
+
+```
+NETWORK TREASURY (20% of all revenue)
+         ↓
+ALLOCATE 10% TO HFT BOT
+         ↓
+┌────────────────────────────────────┐
+│   PYREAL HFT BOT (Chain-Owned)    │
+│                                    │
+│  Strategy: Market Making +        │
+│            Arbitrage + Options    │
+│                                    │
+│  Compute: Dedicated high-perf     │
+│           nodes (GPU accelerated) │
+│                                    │
+│  Execution: Co-located servers    │
+│            at major exchanges     │
+└────────────────────────────────────┘
+         ↓
+GENERATE RETURNS
+         ↓
+DISTRIBUTE PROFITS:
+- 50% → Treasury (compounds)
+- 30% → PYREAL stakers (pro-rata)
+- 20% → Bot improvement fund
+```
+
+#### **Trading Strategies**
+
+**1. Market Making**:
+```
+Post limit orders on both sides of order book:
+Buy: $100.00 (100 shares)
+Sell: $100.05 (100 shares)
+
+Profit: $0.05/share on each round trip
+Volume: 10,000 trades/day
+Daily profit: $500
+
+Funded by: 10% of network treasury
+Risk: Minimal (tight spreads, hedged positions)
+```
+
+**2. Arbitrage**:
+```
+PYREAL trading on multiple DEXs:
+Uniswap: 1 ₱ = $0.0050
+PancakeSwap: 1 ₱ = $0.0052
+
+Bot action:
+1. Buy 1M PYREAL on Uniswap ($5,000)
+2. Bridge to BSC (automated)
+3. Sell 1M PYREAL on PancakeSwap ($5,200)
+4. Profit: $200 (minus gas fees ~$10)
+
+Execution time: 3 minutes
+Daily opportunities: 50+
+Daily profit: ~$8,000
+```
+
+**3. Options Income**:
+```
+Sell covered calls on network's PYREAL holdings:
+Position: 10M PYREAL @ $0.005
+Sell calls: Strike $0.008, 30 days out
+Premium collected: $500/day
+
+If assigned (price rises above $0.008):
+- Profit from token appreciation
+- Re-buy at lower strike
+
+If not assigned:
+- Keep premium
+- Sell new calls next month
+
+Monthly income: ~$15,000
+```
+
+#### **Performance Metrics (Simulated)**
+
+Based on backtesting with similar strategies:
+
+```
+Initial Capital: $1M (from treasury)
+Monthly Return: 3-8%
+Annual Return: 40-120% (compounded)
+Sharpe Ratio: 2.5 (risk-adjusted)
+Max Drawdown: 12%
+
+Year 1 Performance:
+Month 1: $1M → $1.05M (+5%)
+Month 6: $1M → $1.34M (+34%)
+Month 12: $1M → $1.60M (+60%)
+
+Revenue to network: $360,000
+Distributed to stakers: $108,000
+Compounded in treasury: $180,000
+```
+
+#### **Risk Management**
+
+- **Position Limits**: No single position > 5% of capital
+- **Stop Losses**: Automatic exit at 2% loss per trade
+- **Diversification**: Trade across 50+ assets
+- **Monitoring**: Real-time alerts to Conductor AI
+- **Insurance**: 10% of bot capital held as reserve
+
+#### **Governance**
+
+PYREAL stakers vote on:
+- Bot strategy changes
+- Risk tolerance adjustments
+- Profit distribution ratios
+- Capital allocation increases
+
+**Voting Power**: Proportional to staked PYREAL
+**Quorum**: 10% of stakers must participate
+**Threshold**: 66% approval required for changes
+
+---
+
 ## 🚀 Getting Started
 
 ### Prerequisites
